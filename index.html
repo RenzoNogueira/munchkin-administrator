@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="halloween">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.">
+    <title>Landing Page</title>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@2.51.6/dist/full.css" rel="stylesheet" type="text/css" />
+    <style>
+        [d-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+
+        <div class="navbar bg-base-100">
+            <div class="navbar-start">
+                <div class="dropdown">
+                    <label tabindex="0" class="btn btn-ghost lg:hidden">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h8m-8 6h16" />
+                        </svg>
+                    </label>
+                    <ul tabindex="0"
+                        class="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52">
+                        <li><a>Item 1</a></li>
+                        <li tabindex="0">
+                            <a class="justify-between">
+                                Parent
+                                <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                    viewBox="0 0 24 24">
+                                    <path d="M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" />
+                                </svg>
+                            </a>
+                            <ul class="p-2">
+                                <li><a>Submenu 1</a></li>
+                                <li><a>Submenu 2</a></li>
+                            </ul>
+                        </li>
+                        <li><a>Item 3</a></li>
+                    </ul>
+                </div>
+                <a class="btn btn-ghost normal-case text-xl">Munchkin</a>
+            </div>
+            <div class="navbar-center hidden lg:flex">
+                <ul class="menu menu-horizontal px-1">
+                    <li><a>Item 1</a></li>
+                    <li tabindex="0">
+                        <a>
+                            Parent
+                            <svg class="fill-current" xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                viewBox="0 0 24 24">
+                                <path d="M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" />
+                            </svg>
+                        </a>
+                        <ul class="p-2">
+                            <li><a>Submenu 1</a></li>
+                            <li><a>Submenu 2</a></li>
+                        </ul>
+                    </li>
+                    <li><a>Item 3</a></li>
+                </ul>
+            </div>
+            <div class="navbar-end">
+                <a class="btn">Nova Partida</a>
+            </div>
+        </div>
+
+        <main>
+
+            <div id="player" class="flex justify-center p-5" d-cloak>
+                <div class="card w-96 bg-base-100 shadow-xl image-full" :class="style.border.zinc">
+                    <figure><img :src="player.image" alt="Shoes" /></figure>
+                    <div class="card-body">
+                        <h2 class="card-title">{{ player.name }}
+                        </h2>
+                        <small>Força {{ totalForcePlayer }}<a class="tooltip ml-2" data-tip="Level/Itens"><i
+                                    class="fa-solid fa-circle-info"></i></a></small>
+                        <div id="itens-player">
+                            <p class="text-sm text-base-content mt-2">Itens</p>
+                            <div class="grid grid-cols-6 gap-2">
+                                <div class="p-2" v-if="player.itens.length == 0">
+                                    <div class="badge badge-outline">
+                                        <span>Vazio</span>
+                                    </div>
+                                </div>
+                                <div v-for="(item, i) in player.itens" class="p-2">
+                                    <div class="badge badge-outline">{{ item.force }}
+                                        <a class="link tooltip ml-2" data-tip="Remover Item" @click="removeItem(i)"><i
+                                                class="fa-solid fa-xmark"></i></a>
+                                    </div>
+                                </div>
+                                <div class="p-2 ml-2">
+                                    <div class="badge badge-outline">
+                                        <a href="#add-item" class="link tooltip" data-tip="Adicionar Item"><i
+                                                class="fa-solid fa-plus"></i></a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal para adicionar item -->
+                            <div class="modal" id="add-item">
+                                <div class="modal-box w-max">
+                                    <h3 class="font-bold text-lg">Adicionar Item</h3>
+                                    <div class="form-control w-max w-full max-w-xs">
+                                        <label class="label">
+                                            <span class="label-text">Valor do Item</span>
+                                        </label>
+                                        <input v-model="formAddItem.value" type="number"
+                                            placeholder="Digite o valor do item" min="1"
+                                            class="input input-bordered w-full max-w-xs" />
+                                    </div>
+                                    <div class="modal-action">
+                                        <a href="#" class="btn">Cancelar</a>
+                                        <a href="#" @click="addItem" class="btn">Adicionar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-actions justify-end">
+                            <div class="btn-group">
+                                <button class="btn btn-ghost" :class="style.border.zinc">Dado</button>
+                                <button class="btn btn-ghost" :class="style.border.zinc">Batalhar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="players" class="flex justify-center p-5" d-cloak>
+                <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <!-- head -->
+                        <thead>
+                            <tr>
+                                <th class="text-center">Vez de</th>
+                                <th class="text-center">Player</th>
+                                <th class="text-center">Level</th>
+                                <th class="text-center">Força</th>
+                                <th class="text-center">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- row 1 -->
+                            <tr v-for="player in players" :key="player.id">
+                                <td>
+                                    <div class="tooltip" data-tip="Vez de" v-show="turn === player.id">
+                                        <i class="fa-solid fa-circle text-green-500"></i>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="flex items-center space-x-3">
+                                        <div class="avatar">
+                                            <div class="mask mask-squircle w-12 h-12">
+                                                <img src="https://picsum.photos/380/200"
+                                                    alt="Avatar Tailwind CSS Component" />
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <div class="font-bold">{{ player.name }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="font-bold">{{ player.level }}</div>
+                                </td>
+                                <td>{{ player.level + player.force }} <a class="tooltip ml-2" data-tip="Level/Itens"><i
+                                            class="fa-solid fa-circle-info"></i></a></td>
+                                <th>
+                                    <div class="btn-group">
+                                        <button class="btn btn-ghost" :class="style.border.zinc">Visualizar</button>
+                                        <button class="btn btn-ghost" :class="style.border.zinc">Atacar</button>
+                                    </div>
+                                </th>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+
+    </div>
+
+    <script src="https://kit.fontawesome.com/274af9ab8f.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"
+        referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.3/umd/popper.min.js"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="assets/js/main.js"></script>
+</body>
+
+</html>
